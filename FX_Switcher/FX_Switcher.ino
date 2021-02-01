@@ -269,7 +269,7 @@ void EditPresetMenu()
       }
 
       }
-      delay(10);
+      delay(2);
       if(enc1.isClick() && SwitcherState == EditPresetState)
       {
         Serial.println("Switch loop state.");
@@ -308,6 +308,7 @@ void EditPresetMenu()
         SwitcherState = PlayPresetState;
         TFTscreen.background(0, 0, 0);
         DisplayPreset(Presets[PresetCurrentIndex]);
+        currentMenu = 0;
         return;
       }
   }
@@ -315,6 +316,7 @@ void EditPresetMenu()
 
 void MenuChanged()
 {
+
   temp = String(menuItems[currentMenu]);
   temp.toCharArray(currentPrintOut, 15);
   TFTscreen.background(0, 0, 0);
@@ -349,7 +351,11 @@ void DisplayPreset(const byte& preset)
   int offset = 2;
   for (int i=0; i<MaxSupportedPedals; i++)
   {
-    
+
+  //highlight selected pedal in edit mode
+  if (i == currentMenu && SwitcherState == EditPresetState )
+  TFTscreen.stroke(255,0,255);
+  else
   // set the stroke color to white
   TFTscreen.stroke(255,255,255);
 
@@ -360,9 +366,19 @@ void DisplayPreset(const byte& preset)
   // set the fill icon to black if loop is OFF
   TFTscreen.fill(0,0,0);
 
-  // draw a rectangle in the center of screen
+
+  // draw pedal icon
   TFTscreen.rect(offset, 60, 15, 20);
+  // drow pedal knobs
+  TFTscreen.fill(0,0,0);
+  TFTscreen.stroke(255,255,0);
+  TFTscreen.circle(offset + 3, 64, 1);
+  TFTscreen.circle(offset + 11, 64, 1);
+  TFTscreen.circle(offset + 7, 64, 1);
+  TFTscreen.circle(offset + 7, 74, 2);
   offset = offset+20;
+
+
   }
 }
 
