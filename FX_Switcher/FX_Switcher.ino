@@ -241,6 +241,7 @@ void EditPresetMenu()
           else
           {
             currentMenu = menuSize - 1;
+            selectedLoop = currentMenu;
           }
           MenuChanged();
           DisplayPreset(newPreset);
@@ -263,13 +264,14 @@ void EditPresetMenu()
           else
           {
             currentMenu = 0;
+            selectedLoop = currentMenu;
           }
           MenuChanged();
           DisplayPreset(newPreset);
       }
 
       }
-      delay(2);
+      delay(1);
       if(enc1.isClick() && SwitcherState == EditPresetState)
       {
         Serial.println("Switch loop state.");
