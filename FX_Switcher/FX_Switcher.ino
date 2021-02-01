@@ -82,14 +82,14 @@ void setup()
   
   Serial.print( "Assigning pin numbers. \n" );
   
-  LoopSwitchOutputPins[ 0 ] = 33; 
-  LoopSwitchOutputPins[ 1 ] = 34; 
-  LoopSwitchOutputPins[ 2 ] = 35; 
-  LoopSwitchOutputPins[ 3 ] = 36; 
-  LoopSwitchOutputPins[ 4 ] = 37;
-  LoopSwitchOutputPins[ 5 ] = 38;
-  LoopSwitchOutputPins[ 6 ] = 39;
-  LoopSwitchOutputPins[ 7 ] = 40;
+  LoopSwitchOutputPins[ 0 ] = 34; 
+  LoopSwitchOutputPins[ 1 ] = 35; 
+  LoopSwitchOutputPins[ 2 ] = 36; 
+  LoopSwitchOutputPins[ 3 ] = 37; 
+  LoopSwitchOutputPins[ 4 ] = 38;
+  LoopSwitchOutputPins[ 5 ] = 39;
+  LoopSwitchOutputPins[ 6 ] = 40;
+  LoopSwitchOutputPins[ 7 ] = 41;
   
   Serial.print( "Pins 33-40 Assigned. \n" );
   Serial.print( "Assigning pinMode to Output. \n" );
@@ -117,7 +117,7 @@ void setup()
   TFTscreen.text("Loading default preset.", 0, 30);
 
   PresetCurrentIndex = 0;
-  ApplyPreset(PresetCurrentIndex);
+  LoadSelectedPreset();
   
   Serial.print("Making menu items for default preset. \n");
   TFTscreen.text("Init Menu.", 0, 40);
@@ -182,7 +182,7 @@ void ReadMIDI()
 
 void ApplyPreset( const byte& preset )
 {
-  Serial.print( "Loading Preset: " );
+  Serial.print( "Applying Preset: " );
 
   for( byte looperIndex = 0; looperIndex < MaxSupportedPedals; looperIndex++ )
   {
@@ -290,6 +290,8 @@ void EditPresetMenu()
         TFTscreen.text(currentPrintOut, 20, 30);
 
         DisplayPreset(newPreset);
+        //Applying preset for actual preview
+        ApplyPreset(newPreset);
 
       }
       if(enc1.isHolded() && SwitcherState == EditPresetState)
