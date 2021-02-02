@@ -3,7 +3,19 @@ Allows to control one(or pre/post loops) using MIDI Controller.
 Preset changing performed after receiving Program Change message, but can be modified for any type of message.
 Also Schematic can be modified for using with monetary switch. Additional Array with control pins must be initiated and monitored in this case.
 
-MIDI listen requires to use Serial1(available in Arduino Mega) to avoid serial output issues. */
+MIDI listen requires to use Serial1(available in Arduino Mega) to avoid serial output issues. 
+
+NOT FOR COMMERCIAL USE!
+
+Contacts & Media:
+
+e-mail: crash2032@gmail.com
+YouTube: https://www.youtube.com/channel/UCwjdsfFlaZnxokcdG-5whaQ
+INSTAGRAM: https://www.instagram.com/mykhailo_chuha/
+Facebook: https://www.facebook.com/mykhailo.chuha/
+*/
+
+
 
 #include <GyverEncoder.h>
 #include <TFT.h>
@@ -290,10 +302,11 @@ void EditPresetMenu()
         TFTscreen.stroke(255, 0, 0);
         TFTscreen.setTextSize(2);
         TFTscreen.text(currentPrintOut, 20, 30);
-
-        DisplayPreset(newPreset);
+        
         //Applying preset for actual preview
         ApplyPreset(newPreset);
+        DisplayPreset(newPreset);
+
 
       }
       if(enc1.isHolded() && SwitcherState == EditPresetState)
