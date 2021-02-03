@@ -179,9 +179,6 @@ void ReadMIDI()
                 Serial.print("\n");
                 LoadSelectedPreset();
                 DisplayPreset(Presets[PresetCurrentIndex]);
-                BlinkLed(PresetCurrentIndex);  // blink the LED a number of times
-                                            // correponding to the program number
-                                            // (0 to 127, it can last a while..)
                 break;
             // See the online reference for other message types
             default:
@@ -192,7 +189,7 @@ void ReadMIDI()
 }
 
 
-void ApplyPreset( const byte& preset )
+void ApplyPreset( byte preset )
 {
   Serial.print( "Applying Preset: " );
 
@@ -217,7 +214,7 @@ void LoadSelectedPreset()
   Serial.print( "\n" );
 }
 
-void MakeMenuItemsFromPreset(const byte& preset)
+void MakeMenuItemsFromPreset(byte preset)
 {
   for(int i = 0; i < MaxSupportedPedals; i++)
   {
@@ -342,7 +339,7 @@ void MenuChanged()
   TFTscreen.text(currentPrintOut, 20, 30);
 }
 
-void DisplayPreset(const byte& preset)
+void DisplayPreset(byte preset)
 {
   Serial.println("Displating graphical preset.");
   TFTscreen.stroke(0, 255, 0);
@@ -394,13 +391,11 @@ void DisplayPreset(const byte& preset)
   TFTscreen.circle(offset + 7, 64, 1);
   TFTscreen.circle(offset + 7, 74, 2);
   offset = offset+20;
-
-
   }
 }
 
 
-void SerialPrintPreset( const byte& preset )
+void SerialPrintPreset( byte preset )
 {
   Serial.print( "Loaded preset: " );
 
@@ -410,15 +405,4 @@ void SerialPrintPreset( const byte& preset )
     Serial.print( looperState );
   }
   Serial.print( "\n" );
-}
-
-void BlinkLed(byte num)         // Basic blink function. For debug
-{
-    for (byte i=0;i<num;i++)
-    {
-        digitalWrite(LED,HIGH);
-        delay(100);
-        digitalWrite(LED,LOW);
-        delay(100);
-    }
 }
