@@ -343,7 +343,7 @@ void DisplayPreset(byte preset)
 {
   Serial.println("Displating graphical preset.");
   TFTscreen.stroke(0, 255, 0);
-  temp = "Preset: " + String(PresetCurrentIndex);
+  temp = "Preset:" + String(PresetCurrentIndex);
   temp.toCharArray(currentPrintOut, 15);
   if(SwitcherState == PlayPresetState)  //Cleanup if invoked during Play Mode
   TFTscreen.background(0, 0, 0);
