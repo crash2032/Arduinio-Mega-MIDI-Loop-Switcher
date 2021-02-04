@@ -401,3 +401,9 @@ void SerialPrintPreset(byte preset)
   }
   Serial.print("\n");
 }
+
+void MidiFlushBuffer()
+{
+  while(Serial1.available())
+  Serial1.read();
+}
