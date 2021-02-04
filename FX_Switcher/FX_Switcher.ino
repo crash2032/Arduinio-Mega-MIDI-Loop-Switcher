@@ -320,6 +320,7 @@ void EditPresetMenu()
       screen.background(0, 0, 0);
       DisplayPreset(presets[presetCurrentIndex]);
       currentMenu = 0;
+      break;
     }
   }
 }
