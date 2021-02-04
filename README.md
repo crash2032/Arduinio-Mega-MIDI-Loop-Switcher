@@ -11,3 +11,5 @@ For indication ILI9341 based display used.
 For Switching loops 2 8-Relay Modules used
 
 Required GyverEncoder Library: https://github.com/AlexGyver/GyverLibs
+
+Small shootout(in russian): https://youtu.be/fvrEu6rek-M
