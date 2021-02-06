@@ -142,7 +142,7 @@ void setup()
   Serial.print("Setup encoder \n");
   screen.text("Init encoder.", 0, 60);
   enc1.setTickMode(AUTO);
-  enc1.setType(TYPE1);
+  enc1.setType(TYPE2);
 
   Serial.print("Displaying default preset. \n");
   screen.text("Welcome to loop switch.", 0, 70);
@@ -309,6 +309,9 @@ void EditPresetMenu()
         presets[presetBeingEditted] = newPreset;
         EEPROM.write( presetCurrentIndex, presets[presetCurrentIndex] );
         Serial.println("Preset successfully saved on EEPROM.");
+        //Informing user on display
+        screen.stroke(255, 0, 0);
+        screen.text("Saving", 0, 110);
       }
       else if(presets[presetBeingEditted] == newPreset)
       {
@@ -320,6 +323,8 @@ void EditPresetMenu()
       screen.background(0, 0, 0);
       DisplayPreset(presets[presetCurrentIndex]);
       currentMenu = 0;
+      //Clean up midi input buffer if messages were received during editing
+      void MidiFlushBuffer();
       break;
     }
   }
