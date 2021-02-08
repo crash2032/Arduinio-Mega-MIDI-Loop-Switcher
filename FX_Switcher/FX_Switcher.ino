@@ -37,19 +37,18 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 #define CS   53
 #define DC   9  //A0
 #define RST  8  //Reset
+#define BRIGHTNESS_PIN 6
 
 //Encoder pins INIT
 #define CLK 2
 #define DT 3
 #define SW 4
 
-
+//Init pedals config
 const byte maxSupportedPedals = 8;
 byte presets[maxSupportedPedals * maxSupportedPedals];
 byte presetCurrentIndex = 0; // Default Preset used.
 byte presetBeingEditted = 0; // Preset under the editing
-
-
 byte loopSwitchOutputPins[maxSupportedPedals];
 
 //  Loop Switcher State
@@ -64,6 +63,8 @@ byte switcherState = PlayPresetState; // Select a Preset RunState by default.
 
 // create an instance of the TFT library
 TFT screen = TFT(CS, DC, RST);
+byte screenBrightness = 150;  //default screen brightness
+
 // create an instance of the Encoder library
 Encoder enc1(CLK, DT, SW);//Encoder pins INIT
 
@@ -84,9 +85,13 @@ void setup()
   Serial.print("Starting setup()\n");
 
   Serial.print("Starting TFT screen. \n");
+
   screen.begin();
   // clear the screen with a black background
   screen.background(0, 0, 0);
+  // Turn on LED backlight
+  pinMode(BRIGHTNESS_PIN, OUTPUT);
+  SetDisplayBrightness(screenBrightness);
   //set the text size
   screen.setTextSize(1);
   screen.stroke(0, 255, 0);
@@ -155,13 +160,7 @@ void setup()
 void loop()
 {
   ReadMIDI();
-  if (enc1.isHolded() && switcherState == PlayPresetState)
-  {
-    Serial.println("Entering Edit Mode");
-    switcherState = EditPresetState;
-    MenuChanged();
-    EditPresetMenu();
-  }
+  ReadEncoder();
 }
 
 void ReadMIDI()
@@ -183,6 +182,39 @@ void ReadMIDI()
       break;
     }
   }
+}
+
+void ReadEncoder()
+{
+  if (enc1.isHolded() && switcherState == PlayPresetState)
+  {
+    Serial.println("Entering Edit Mode");
+    switcherState = EditPresetState;
+    MenuChanged();
+    EditPresetMenu();
+  } 
+  if (enc1.isLeft() && switcherState == PlayPresetState)
+  {
+    Serial.println("Decrease brightness");
+    int tempBrightness = screenBrightness;
+    if(tempBrightness > 10)
+    {
+    tempBrightness = tempBrightness - 10;
+    screenBrightness = tempBrightness;
+    SetDisplayBrightness(screenBrightness);
+    }  
+  }
+  if (enc1.isRight() && switcherState == PlayPresetState)
+  {
+    Serial.println("Decrease brightness");
+    int tempBrightness = screenBrightness;
+    if(tempBrightness < 250)
+    {
+    tempBrightness = tempBrightness + 10;
+    screenBrightness = tempBrightness;
+    SetDisplayBrightness(screenBrightness);
+    }  
+  }  
 }
 
 
@@ -407,8 +439,16 @@ void SerialPrintPreset(byte preset)
   Serial.print("\n");
 }
 
+void SetDisplayBrightness(byte brightness)
+{
+  analogWrite(BRIGHTNESS_PIN, brightness);
+}
+
 void MidiFlushBuffer()
 {
-  while(Serial1.available())
+  while(Serial1.available() && Serial.available() )
+  {
   Serial1.read();
+  Serial.read();
+  }
 }
