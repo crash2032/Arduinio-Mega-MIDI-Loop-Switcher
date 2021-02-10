@@ -1,7 +1,5 @@
 # Loop Switcher with MIDI Control
 
-
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License](https://upload.wikimedia.org/wikipedia/commons/8/86/GPL_v3_Blue_Badge.svg)](LICENSE.md)
 
 # Description
