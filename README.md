@@ -10,6 +10,8 @@ Also Schematic can be modified for using with monetary switch. Additional Array 
 
 # Relays connection
 
+Here is example of a basic relay setup for 4 pedals. To extend it - connect output of the relay module 1 to input of the relay module 2. 
+
 ![N|Solid](relays.jpg)
 
 Each relay power consumption is about 70mA, so use powerful and quality power adapter. Some of you could face some noises when FX engaged - check that you connected all grounds from all input jacks to the - of the power.
