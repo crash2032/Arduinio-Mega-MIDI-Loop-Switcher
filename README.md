@@ -8,6 +8,14 @@ This device allows to control one(or both Amp pre/post loops) using MIDI Control
 Preset changing performed after receiving Program Change message, but can be modified for any type of message.
 Also Schematic can be modified for using with monetary switch. Additional Array with control pins must be initiated and monitored in this case.
 
+# Relays connection
+
+![N|Solid](relays.jpg)
+
+Each relay power consumption is about 70mA, so use powerful and quality power adapter. Some of you could face some noises when FX engaged - check that you connected all grounds from all input jacks to the - of the power.
+
+Additionaly, apply 2 filters to clean-up incoming power. Place one on the main after main power input beforre DC-DC converter and one after DC-DC converter. This will significaly improve total sound quality and reduce power bouncing.
+![N|Solid](filter.jpg)
 
 Important:
 
@@ -31,9 +39,6 @@ FX Switcher requiers 3rd party libs:
 
 
 
-Each relay power consumption is about 70mA, so use powerful and quality power adapter. Some of you could face some noises when FX engaged - check that you connected all grounds from all input jacks to the - of the power.
 
-Additionaly, apply 2 filters to clean-up incoming power. Place one on the main after main power input beforre DC-DC converter and one after DC-DC converter. This will significaly improve total sound quality and reduce power bouncing.
-![N|Solid](filter.jpg)
 
 Small shootout(in russian): https://youtu.be/fvrEu6rek-M
