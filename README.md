@@ -16,7 +16,7 @@ Here is example of a basic relay setup for 4 pedals. To extend it - connect outp
 
 Each relay power consumption is about 70mA, so use powerful and quality power adapter. Some of you could face some noises when FX engaged - check that you connected all grounds from all input jacks to the - of the power.
 
-Additionaly, apply 2 filters to clean-up incoming power. Place one on the main after main power input beforre DC-DC converter and one after DC-DC converter. This will significaly improve total sound quality and reduce power bouncing.
+Additionaly, apply DC filter to clean-up incoming power. Place one on the main after main power input beforre DC-DC converter and one after DC-DC converter. This will significaly improve total sound quality and reduce power bouncing.
 ![N|Solid](filter.jpg)
 
 Important:
