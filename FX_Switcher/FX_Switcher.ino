@@ -94,7 +94,8 @@ void setup()
   //set the text size
   screen.setTextSize(1);
   screen.stroke(0, 255, 0);
-  screen.text("Init Loops.", 0, 0);
+  int screenY = 0;
+  screen.text("Init Loops.", 0, screenY);
 
   Serial.print("Assigning pin numbers. \n");
 
@@ -119,7 +120,8 @@ void setup()
   pinMode(BufferPIN, OUTPUT);
 
   Serial.print("Loading presets from EEPROM into presets list. \n");
-  screen.text("Loading Presets.", 0, 10);
+  screenY = screenY + 10;
+  screen.text("Loading Presets.", 0, screenY);
 
   for(int index = 0; index < maxSupportedPedals * maxSupportedPedals; index++)
   {
@@ -130,37 +132,62 @@ void setup()
     SerialPrintPreset(presets[index]);
   }
   Serial.print("64 presets being loaded. \n");
-  screen.text("Presets Loaded.", 0, 20);
+  screenY = screenY + 10;
+  screen.text("Presets Loaded.", 0, screenY);
 
+  /* 
+   
+  //Loading preset with index 0 and creating edit menu for it. Un-coment whole section to use this logic
   Serial.print("Setting start preset. \n");
-  screen.text("Loading default preset.", 0, 30);
+  screenY = screenY + 10;
+  screen.text("Loading default preset.", 0, screenY);
 
   presetCurrentIndex = 0;
   LoadSelectedPreset();
+ 
 
   Serial.print("Making menu items for default preset. \n");
-  screen.text("Init Menu.", 0, 40);
+  screenY = screenY + 10;
+  screen.text("Init Menu.", 0, screenY);
   MakeMenuItemsFromPreset(presets[presetCurrentIndex]);
+  */
+
+  //Loading preset emprty preset(bypass)
+  Serial.print("Setting start preset. \n");
+  screenY = screenY + 10;
+  screen.text("Looper bypassed", 0, screenY);
+  
+  ApplyPreset(0xFF);
+
+  Serial.print("Making menu items for default preset. \n");
+  screenY = screenY + 10;
+  screen.text("Init Menu.", 0, screenY);
+  MakeMenuItemsFromPreset(0xFF);
 
   Serial.print("Starting MIDI. \n");
-  screen.text("Init MIDI", 0, 50);
+  screenY = screenY + 10;
+  screen.text("Init MIDI", 0, screenY);
   MIDI.begin();
 
   Serial.print("Setup encoder \n");
-  screen.text("Init encoder.", 0, 60);
+  screenY = screenY + 10;
+  screen.text("Init encoder.", 0, screenY);
   enc1.setTickMode(AUTO);
   enc1.setType(TYPE2);
 
   Serial.print("Reading buffer state: \n");
-  screen.text("Setup buffer.", 0, 70);
+  screenY = screenY + 10;
+  screen.text("Setup buffer.", 0, screenY);
   ApplyBufferState();
   
   Serial.print("Displaying default preset. \n");
-  screen.text("Welcome to loop switch.", 0, 80);
+  screenY = screenY + 10;
+  screen.text("Welcome to loop switch.", 0, screenY);
   delay(1000);
-  DisplayPreset(presets[presetCurrentIndex]);
-
-  Serial.print("Loop switch Ready. \n");
+  
+  //DisplayPreset(presets[presetCurrentIndex]);   //Use for displaying 0 preset
+  DisplayByPassedScreen();
+  Serial.print("Loop switch Ready. \n");    //Use for displaying "Bypassed message"
 }
 
 void loop()
@@ -461,4 +488,17 @@ void MidiFlushBuffer()
   Serial1.read();
   Serial.read();
   }
+}
+
+void DisplayByPassedScreen()
+{
+  Serial.println("Displating graphical preset.");
+  screen.stroke(0, 255, 0);
+  temp = "Bypassed";
+  temp.toCharArray(currentPrintOut, 15);
+  if(switcherState == PlayPresetState)  //Cleanup if invoked during Play Mode
+    screen.background(0, 0, 0);
+
+  screen.setTextSize(3);
+  screen.text(currentPrintOut, 0, 0);
 }
