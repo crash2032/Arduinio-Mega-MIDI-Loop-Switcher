@@ -173,7 +173,7 @@ void setup()
   screenY = screenY + 10;
   screen.text("Init encoder.", 0, screenY);
   enc1.setTickMode(AUTO);
-  enc1.setType(TYPE2);
+  enc1.setType(TYPE1);
 
   Serial.print("Reading buffer state: \n");
   screenY = screenY + 10;
@@ -219,6 +219,7 @@ void ReadMIDI()
 
 void ReadEncoder()
 {
+  delay(1);
   if (enc1.isHolded() && switcherState == PlayPresetState)
   {
     Serial.println("Entering Edit Mode");
@@ -228,11 +229,18 @@ void ReadEncoder()
   } 
   if (enc1.isDouble() && switcherState == PlayPresetState)
   {
+    ApplyPreset(0xFF);
+    Serial.println("Manually bypassed");
+    DisplayByPassedScreen();
+  }
+  if (enc1.isSingle() && switcherState == PlayPresetState)
+  {
     Serial.println("Switching buffer state");
     SwitchBufferState();
     DisplayPreset(presets[presetCurrentIndex]);
+    }
+    
 
-  } 
 }
 
 
@@ -284,6 +292,7 @@ void EditPresetMenu()
   {
     if(enc1.isLeft() != upLastState)
     {
+      delay(10);
       upLastState = !upLastState;
       if(!upLastState)
       {
@@ -306,6 +315,7 @@ void EditPresetMenu()
 
     if(enc1.isRight() != downLastState)
     {
+      delay(10);
       downLastState = !downLastState;
 
       if(!downLastState)
@@ -326,7 +336,7 @@ void EditPresetMenu()
       }
 
     }
-    delay(1);
+    delay(10);
     if(enc1.isClick() && switcherState == EditPresetState)
     {
       Serial.println("Switch loop state.");
@@ -360,8 +370,8 @@ void EditPresetMenu()
         EEPROM.write( presetCurrentIndex, presets[presetCurrentIndex] );
         Serial.println("Preset successfully saved on EEPROM.");
         //Informing user on display
-        screen.stroke(255, 0, 0);
-        screen.text("Saving", 0, 110);
+        DisplaySavedScreen();
+
       }
       else if(presets[presetBeingEditted] == newPreset)
       {
@@ -375,6 +385,7 @@ void EditPresetMenu()
       currentMenu = 0;
       //Clean up midi input buffer if messages were received during editing
       void MidiFlushBuffer();
+      delay(1);
       break;
     }
   }
@@ -501,4 +512,17 @@ void DisplayByPassedScreen()
 
   screen.setTextSize(3);
   screen.text(currentPrintOut, 0, 0);
+}
+
+void DisplaySavedScreen()
+{
+  Serial.println("Displating saved preset message.");
+  screen.stroke(0, 255, 0);
+  temp = "Saved";
+  temp.toCharArray(currentPrintOut, 15);
+  screen.background(0, 0, 0);
+
+  screen.setTextSize(3);
+  screen.text(currentPrintOut, 0, 0);
+  delay(50);
 }
