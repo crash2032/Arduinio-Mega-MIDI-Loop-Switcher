@@ -219,7 +219,6 @@ void ReadMIDI()
 
 void ReadEncoder()
 {
-  delay(1);
   if (enc1.isHolded() && switcherState == PlayPresetState)
   {
     Serial.println("Entering Edit Mode");
@@ -227,20 +226,18 @@ void ReadEncoder()
     MenuChanged();
     EditPresetMenu();
   } 
-  if (enc1.isDouble() && switcherState == PlayPresetState)
+  if (enc1.isSingle() && switcherState == PlayPresetState)
   {
     ApplyPreset(0xFF);
     Serial.println("Manually bypassed");
     DisplayByPassedScreen();
   }
-  if (enc1.isSingle() && switcherState == PlayPresetState)
+  if (enc1.isDouble() && switcherState == PlayPresetState)
   {
     Serial.println("Switching buffer state");
     SwitchBufferState();
     DisplayPreset(presets[presetCurrentIndex]);
     }
-    
-
 }
 
 
@@ -292,7 +289,7 @@ void EditPresetMenu()
   {
     if(enc1.isLeft() != upLastState)
     {
-      delay(10);
+      enc1.resetStates();
       upLastState = !upLastState;
       if(!upLastState)
       {
@@ -315,7 +312,7 @@ void EditPresetMenu()
 
     if(enc1.isRight() != downLastState)
     {
-      delay(10);
+      enc1.resetStates();
       downLastState = !downLastState;
 
       if(!downLastState)
@@ -357,8 +354,10 @@ void EditPresetMenu()
       screen.text(currentPrintOut, 20, 30);
 
         //Applying preset for actual preview
+      enc1.resetStates();
       ApplyPreset(newPreset);
       DisplayPreset(newPreset);
+      
     }
 
     if(enc1.isHolded() && switcherState == EditPresetState)
@@ -369,6 +368,8 @@ void EditPresetMenu()
         presets[presetBeingEditted] = newPreset;
         EEPROM.write( presetCurrentIndex, presets[presetCurrentIndex] );
         Serial.println("Preset successfully saved on EEPROM.");
+        enc1.resetStates();
+
         //Informing user on display
         DisplaySavedScreen();
 
@@ -381,6 +382,7 @@ void EditPresetMenu()
       Serial.println("Entering Play Mode");
       switcherState = PlayPresetState;
       screen.background(0, 0, 0);
+      enc1.resetStates();
       DisplayPreset(presets[presetCurrentIndex]);
       currentMenu = 0;
       //Clean up midi input buffer if messages were received during editing
@@ -508,8 +510,8 @@ void DisplayByPassedScreen()
   temp = "Bypassed";
   temp.toCharArray(currentPrintOut, 15);
   if(switcherState == PlayPresetState)  //Cleanup if invoked during Play Mode
-    screen.background(0, 0, 0);
-
+  screen.background(0, 0, 0);
+  enc1.resetStates();
   screen.setTextSize(3);
   screen.text(currentPrintOut, 0, 0);
 }
@@ -524,5 +526,7 @@ void DisplaySavedScreen()
 
   screen.setTextSize(3);
   screen.text(currentPrintOut, 0, 0);
-  delay(50);
+  enc1.resetStates();
+
+  delay(100);
 }
