@@ -26,6 +26,7 @@ MIDI_CREATE_DEFAULT_INSTANCE();
 
 #define LED 13
 #define BufferPIN 6
+#define Bypass 0xFF
 
 
 //Dispay pins INIT
@@ -157,7 +158,7 @@ void setup()
   screenY = screenY + 10;
   screen.text("Looper bypassed", 0, screenY);
   
-  ApplyPreset(0xFF);
+  ApplyPreset(Bypass);
 
   Serial.print("Making menu items for default preset. \n");
   screenY = screenY + 10;
@@ -228,7 +229,7 @@ void ReadEncoder()
   } 
   if (enc1.isSingle() && switcherState == PlayPresetState)
   {
-    ApplyPreset(0xFF);
+    ApplyPreset(Bypass);
     Serial.println("Manually bypassed");
     DisplayByPassedScreen();
   }
