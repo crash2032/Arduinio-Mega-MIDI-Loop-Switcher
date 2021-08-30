@@ -189,6 +189,8 @@ void setup()
   //DisplayPreset(presets[presetCurrentIndex]);   //Use for displaying 0 preset
   DisplayByPassedScreen();
   Serial.print("Loop switch Ready. \n");    //Use for displaying "Bypassed message"
+  DisplayHelpText();
+  DisplayBufferState();
 }
 
 void loop()
@@ -224,8 +226,9 @@ void ReadEncoder()
   {
     Serial.println("Entering Edit Mode");
     switcherState = EditPresetState;
-    MenuChanged();
+    DisplayHelpText();
     EditPresetMenu();
+    
   } 
   if (enc1.isSingle() && switcherState == PlayPresetState)
   {
@@ -237,7 +240,8 @@ void ReadEncoder()
   {
     Serial.println("Switching buffer state");
     SwitchBufferState();
-    DisplayPreset(presets[presetCurrentIndex]);
+    //DisplayPreset(presets[presetCurrentIndex]);
+    DisplayBufferState();
     }
 }
 
@@ -305,7 +309,6 @@ void EditPresetMenu()
           currentMenu = menuSize - 1;
           selectedLoop = currentMenu;
         }
-        MenuChanged();
         DisplayPreset(newPreset);
       }
 
@@ -329,7 +332,6 @@ void EditPresetMenu()
           currentMenu = 0;
           selectedLoop = currentMenu;
         }
-        MenuChanged();
         DisplayPreset(newPreset);
       }
 
@@ -347,14 +349,7 @@ void EditPresetMenu()
       Serial.println("Updating menu item. ");
       menuItems[currentMenu] = "Pedal " + String(currentMenu+1) + String(newLoopState ? " OFF" : " ON"); //relay controled with LOW signal
 
-      temp = String(menuItems[currentMenu]);
-      temp.toCharArray(currentPrintOut, 15);
-      screen.background(0, 0, 0);
-      screen.stroke(255, 0, 0);
-      screen.setTextSize(2);
-      screen.text(currentPrintOut, 20, 30);
-
-        //Applying preset for actual preview
+      //Applying preset for actual preview
       enc1.resetStates();
       ApplyPreset(newPreset);
       DisplayPreset(newPreset);
@@ -373,6 +368,7 @@ void EditPresetMenu()
 
         //Informing user on display
         DisplaySavedScreen();
+        DisplayHelpText();
 
       }
       else if(presets[presetBeingEditted] == newPreset)
@@ -382,7 +378,7 @@ void EditPresetMenu()
 
       Serial.println("Entering Play Mode");
       switcherState = PlayPresetState;
-      screen.background(0, 0, 0);
+      DisplayHelpText();
       enc1.resetStates();
       DisplayPreset(presets[presetCurrentIndex]);
       currentMenu = 0;
@@ -407,11 +403,15 @@ void MenuChanged()
 void DisplayPreset(byte preset)
 {
   Serial.println("Displating graphical preset.");
+
+  //Clean up preset ID
+  screen.stroke(0,0,0);
+  screen.fill(0,0,0);
+  screen.rect(0, 0, 160, 30);
+  
   screen.stroke(0, 255, 0);
   temp = "Preset:" + String(presetCurrentIndex);
   temp.toCharArray(currentPrintOut, 15);
-  if(switcherState == PlayPresetState)  //Cleanup if invoked during Play Mode
-    screen.background(0, 0, 0);
 
   screen.setTextSize(3);
   screen.text(currentPrintOut, 0, 0);
@@ -421,11 +421,11 @@ void DisplayPreset(byte preset)
   screen.stroke(55,0,255);
   screen.rect(0, 50, 79, 50);
   screen.rect(80, 50, 80, 50);
-  //Pre-Post Labels
+  //Group Labels
   screen.setTextSize(1);
   screen.stroke(255, 0, 0);
-  screen.text("Post", 30, 85);
-  screen.text("Pre", 110, 85);
+  screen.text("FX Loop", 20, 85);
+  screen.text("Input", 105, 85);
   //Drawing loops states
   int offset = 2;
   for (int i=0; i<maxSupportedPedals; i++)
@@ -454,15 +454,57 @@ void DisplayPreset(byte preset)
     screen.circle(offset + 11, 64, 1);
     screen.circle(offset + 7, 64, 1);
     screen.circle(offset + 7, 74, 2);
-    offset = offset+20;
+    offset = offset+20;    
+  }
+}
 
-    //Buffer state
+void DisplayBufferState()
+{
+    //clear previous state
+    screen.stroke(0,0,0);
+    screen.fill(0,0,0);
+    screen.rect(78, 106, 160, 30);  
     screen.setTextSize(2);
     screen.stroke(155, 50, 200);
-    temp = "Buffer is" + String(bufferState ? " OFF" : " ON");
+    temp = String(bufferState ? "" : " -[B]- ");
     temp.toCharArray(currentPrintOut, 15);
-    screen.text(currentPrintOut, 0, 110);
-  }
+    screen.text(currentPrintOut, 78, 106);
+}
+
+void DisplayHelpText()
+{
+    //Clean up
+    screen.stroke(0,0,0);
+    screen.fill(0,0,0);
+    screen.rect(0, 32, 80, 15);  
+    screen.rect(0, 105, 80, 20);  
+    //Displaying help text
+    if(switcherState == PlayPresetState)
+    {   
+    screen.setTextSize(1);
+    screen.stroke(0, 255, 0);
+    temp = "Double to";
+    temp.toCharArray(currentPrintOut, 15);
+    screen.text(currentPrintOut, 0, 105);
+    temp = "Switch buffer";
+    temp.toCharArray(currentPrintOut, 15);
+    screen.text(currentPrintOut, 0, 115);
+    temp = "Hold for edit";
+    temp.toCharArray(currentPrintOut, 15);
+    screen.text(currentPrintOut, 0, 32);   
+    }
+    else if (switcherState == EditPresetState)
+    {  
+    screen.setTextSize(1);
+    screen.stroke(0, 255, 0);
+    temp = "Hold to";
+    temp.toCharArray(currentPrintOut, 15);
+    screen.text(currentPrintOut, 0, 105);
+    temp = "Save Preset";
+    temp.toCharArray(currentPrintOut, 15);
+    screen.text(currentPrintOut, 0, 115);     
+    
+    }
 }
 
 void ApplyBufferState()
@@ -481,6 +523,7 @@ void SwitchBufferState()
   EEPROM.write( bufferAddr, bufferByte );
   digitalWrite(BufferPIN, bufferState);
   Serial.println("Buffer switched to" + String(bufferState ? " OFF" : " ON"));
+  DisplayBufferState();
 }
 
 void SerialPrintPreset(byte preset)
@@ -529,5 +572,5 @@ void DisplaySavedScreen()
   screen.text(currentPrintOut, 0, 0);
   enc1.resetStates();
 
-  delay(100);
+  delay(200);
 }
