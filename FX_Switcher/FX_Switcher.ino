@@ -136,23 +136,6 @@ void setup()
   screenY = screenY + 10;
   screen.text("Presets Loaded.", 0, screenY);
 
-  /* 
-   
-  //Loading preset with index 0 and creating edit menu for it. Un-coment whole section to use this logic
-  Serial.print("Setting start preset. \n");
-  screenY = screenY + 10;
-  screen.text("Loading default preset.", 0, screenY);
-
-  presetCurrentIndex = 0;
-  LoadSelectedPreset();
- 
-
-  Serial.print("Making menu items for default preset. \n");
-  screenY = screenY + 10;
-  screen.text("Init Menu.", 0, screenY);
-  MakeMenuItemsFromPreset(presets[presetCurrentIndex]);
-  */
-
   //Loading preset emprty preset(bypass)
   Serial.print("Setting start preset. \n");
   screenY = screenY + 10;
@@ -163,7 +146,6 @@ void setup()
   Serial.print("Making menu items for default preset. \n");
   screenY = screenY + 10;
   screen.text("Init Menu.", 0, screenY);
-  MakeMenuItemsFromPreset(0xFF);
 
   Serial.print("Starting MIDI. \n");
   screenY = screenY + 10;
@@ -185,7 +167,7 @@ void setup()
   screenY = screenY + 10;
   screen.text("Welcome to loop switch.", 0, screenY);
   delay(1000);
-  
+  screen.background(0, 0, 0);
   //DisplayPreset(presets[presetCurrentIndex]);   //Use for displaying 0 preset
   DisplayByPassedScreen();
   Serial.print("Loop switch Ready. \n");    //Use for displaying "Bypassed message"
@@ -266,22 +248,8 @@ void LoadSelectedPreset()
   Serial.println(presetCurrentIndex);
 
   ApplyPreset(presets[presetCurrentIndex]);
-  MakeMenuItemsFromPreset(presets[presetCurrentIndex]);
 
   Serial.print("\n");
-}
-
-void MakeMenuItemsFromPreset(byte preset)
-{
-  for(int i = 0; i < maxSupportedPedals; i++)
-  {
-    Serial.println("Updating Menu Items.");
-    Serial.print("Menu Item added: ");
-    byte loopState = bitRead(preset, i);
-    menuItems[i] = "Pedal " + String(i+1) + String(loopState ? " OFF" : " ON"); //relay controled with LOW signal
-    Serial.print(menuItems[i]);
-    Serial.print("\n");
-  }
 }
 
 void EditPresetMenu()
@@ -346,8 +314,8 @@ void EditPresetMenu()
       bitWrite(newPreset, selectedLoop, newLoopState); //menuLooperIndex is a selected looper within the menu
       Serial.print("Became: ");
       SerialPrintPreset(newPreset);
-      Serial.println("Updating menu item. ");
-      menuItems[currentMenu] = "Pedal " + String(currentMenu+1) + String(newLoopState ? " OFF" : " ON"); //relay controled with LOW signal
+      //Serial.println("Updating menu item. ");
+      //menuItems[currentMenu] = "Pedal " + String(currentMenu+1) + String(newLoopState ? " OFF" : " ON"); //relay controled with LOW signal
 
       //Applying preset for actual preview
       enc1.resetStates();
@@ -405,9 +373,7 @@ void DisplayPreset(byte preset)
   Serial.println("Displating graphical preset.");
 
   //Clean up preset ID
-  screen.stroke(0,0,0);
-  screen.fill(0,0,0);
-  screen.rect(0, 0, 160, 30);
+CleanUpPreset();
   
   screen.stroke(0, 255, 0);
   temp = "Preset:" + String(presetCurrentIndex);
@@ -549,15 +515,25 @@ void MidiFlushBuffer()
 
 void DisplayByPassedScreen()
 {
-  Serial.println("Displating graphical preset.");
-  screen.stroke(0, 255, 0);
+  Serial.println("Displating bypass screen.");
+  DisplayPreset(Bypass);  
   temp = "Bypassed";
   temp.toCharArray(currentPrintOut, 15);
   if(switcherState == PlayPresetState)  //Cleanup if invoked during Play Mode
-  screen.background(0, 0, 0);
+  //Clean up preset ID
+  CleanUpPreset();
+  screen.stroke(0, 255, 0);
   enc1.resetStates();
   screen.setTextSize(3);
   screen.text(currentPrintOut, 0, 0);
+}
+
+void CleanUpPreset()
+{
+  //Clean up preset ID
+  screen.stroke(0,0,0);
+  screen.fill(0,0,0);
+  screen.rect(0, 0, 160, 30);
 }
 
 void DisplaySavedScreen()
