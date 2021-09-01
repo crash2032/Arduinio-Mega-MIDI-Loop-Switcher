@@ -538,12 +538,11 @@ void CleanUpPreset()
 
 void DisplaySavedScreen()
 {
+  CleanUpPreset();
   Serial.println("Displating saved preset message.");
   screen.stroke(0, 255, 0);
   temp = "Saved";
   temp.toCharArray(currentPrintOut, 15);
-  screen.background(0, 0, 0);
-
   screen.setTextSize(3);
   screen.text(currentPrintOut, 0, 0);
   enc1.resetStates();
